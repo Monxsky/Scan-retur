@@ -6,8 +6,8 @@
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
-body { font-family: Arial; text-align:center; padding:10px; }
-button { padding:10px; margin:5px; font-size:16px; }
+body { font-family: Lexend; text-align:center; padding:10px; }
+button { padding:10px; margin:5px; font-size:10px; }
 #reader { width:100%; max-width:400px; margin:auto; }
 .item { margin:5px; padding:5px; border-bottom:1px solid #ccc; }
 </style>
@@ -17,10 +17,31 @@ button { padding:10px; margin:5px; font-size:16px; }
 
 <h3>Scan Paket</h3>
 
+let audioCtx;
+
+// aktifin audio (cukup sekali)
+function enableSound() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+// bunyi beep
+function beep() {
+  if (!audioCtx) return;
+
+  const osc = audioCtx.createOscillator();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
+
+  osc.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.08);
+}
 <!-- MODE -->
 <div>
   <button onclick="setMode('RETUR')">RETUR</button>
+  <button onclick="enableSound(); setMode('RETUR')">RETUR</button>
   <button onclick="setMode('CANCEL')">CANCEL</button>
+  <button onclick="enableSound(); setMode('CANCEL')">CANCEL</button>
 </div>
 
 <h4>Mode Aktif: <span id="mode">RETUR</span></h4>
@@ -34,6 +55,7 @@ button { padding:10px; margin:5px; font-size:16px; }
 <div id="list"></div>
 
 <button onclick="sendData()">🚀 Kirim Semua</button>
+<button onclick="enableSound(); </button>
 <button onclick="clearAll()">❌ Hapus Semua</button>
 
 <script>
@@ -78,6 +100,7 @@ function sendData() {
   if(data.length === 0) {
     alert("Tidak ada data!");
     return;
+    <button onclick="enableSound(); </button>
   }
 
   fetch("https://script.google.com/macros/s/AKfycbz0EOKUtXc1GXyO5l4nrTQaLLp9L6N7Rb_j3yYnNtw-nYYRmLNzu1nYehfpT-hrjCc/exec/exec", {
