@@ -18,10 +18,8 @@ button { padding:10px; margin:5px; font-size:10px; }
 <h3>Scan Paket</h3>
 <!-- MODE -->
 <div>
-  <button onclick="setMode('RETUR')">RETUR</button>
   <button onclick="enableSound(); setMode('RETUR')">RETUR</button>
-  <button onclick="setMode('CANCEL')">CANCEL</button>
-  <button onclick="enableSound(); setMode('CANCEL')">CANCEL</button>
+<button onclick="enableSound(); setMode('CANCEL')">CANCEL</button>
 </div>
 
 <h4>Mode Aktif: <span id="mode">RETUR</span></h4>
@@ -35,7 +33,6 @@ button { padding:10px; margin:5px; font-size:10px; }
 <div id="list"></div>
 
 <button onclick="sendData()">🚀 Kirim Semua</button>
-<button onclick="enableSound(); </button>
 <button onclick="clearAll()">❌ Hapus Semua</button>
 
 <script>
@@ -127,6 +124,7 @@ scanner.start(
     data.push({
       resi: decodedText,
       status: mode
+      beep();
     });
 
     render();
