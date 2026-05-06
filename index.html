@@ -1,51 +1,116 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Scan Retur</title>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scan Retur</title>
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<style>
+body { font-family: Arial; text-align:center; padding:10px; }
+button { padding:10px; margin:5px; font-size:16px; }
+#reader { width:100%; max-width:400px; margin:auto; }
+.item { margin:5px; padding:5px; border-bottom:1px solid #ccc; }
+</style>
 </head>
+
 <body>
 
-<h3>Scan Retur</h3>
+<h3>Scan Paket</h3>
 
-<label>Tanggal:</label>
-<input type="date" id="tanggal"><br><br>
+<!-- MODE -->
+<div>
+  <button onclick="setMode('RETUR')">RETUR</button>
+  <button onclick="setMode('CANCEL')">CANCEL</button>
+</div>
 
-<button onclick="startScanner()">Mulai Scan</button>
+<h4>Mode Aktif: <span id="mode">RETUR</span></h4>
 
-<div id="reader" style="width:300px; margin-top:20px;"></div>
+<h4>Total: <span id="total">0</span></h4>
+
+<div id="reader"></div>
+
+<hr>
+
+<div id="list"></div>
+
+<button onclick="sendData()">🚀 Kirim Semua</button>
+<button onclick="clearAll()">❌ Hapus Semua</button>
 
 <script>
-const tanggal = document.getElementById("tanggal");
-tanggal.valueAsDate = new Date();
 
-let scanner;
+let mode = "RETUR";
+let data = [];
 
-function startScanner() {
-  scanner = new Html5Qrcode("reader");
+function setMode(m) {
+  mode = m;
+  document.getElementById("mode").innerText = m;
+}
 
-  Html5Qrcode.getCameras().then(devices => {
-    if (devices && devices.length) {
-      let cameraId = devices[0].id;
+function render() {
+  let list = document.getElementById("list");
+  list.innerHTML = "";
 
-      scanner.start(
-    { facingMode: "environment" }, // 🔥 ini kuncinya (kamera belakang)
-    { fps: 10, qrbox: 250 },
-    (decodedText) => {
-      
-       scanner.stop().then(() => {
-         
-          fetch("https://script.google.com/macros/s/AKfycbwkn6XaWmxnEVgADstmplU4NbjqZ1EChqL1Xy26DnF9Wb0AMI7rLydzXfANkNh1O5FF/exec?tanggal=" + tanggal.value + "&resi=" + decodedText)
-          .then(() => {
-            alert("Scan masuk: " + decodedText);
-          });
-        }
-      );
-    }
-  }).catch(err => {
-    alert("Kamera error: " + err);
+  data.forEach((item, i) => {
+    list.innerHTML += `
+      <div class="item">
+        ${item.resi} (${item.status})
+        <button onclick="removeItem(${i})">Hapus</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("total").innerText = data.length;
+}
+
+function removeItem(i) {
+  data.splice(i,1);
+  render();
+}
+
+function clearAll() {
+  if(confirm("Hapus semua data?")) {
+    data = [];
+    render();
+  }
+}
+
+function sendData() {
+  if(data.length === 0) {
+    alert("Tidak ada data!");
+    return;
+  }
+
+  fetch("https://script.google.com/macros/s/URL_LU/exec", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(() => {
+    alert("Data terkirim!");
+    data = [];
+    render();
   });
 }
+
+// scanner
+const scanner = new Html5Qrcode("reader");
+
+scanner.start(
+  { facingMode: "environment" },
+  { fps: 10, qrbox: 250 },
+  (decodedText) => {
+
+    // anti double
+    if(data.find(d => d.resi === decodedText)) return;
+
+    data.push({
+      resi: decodedText,
+      status: mode
+    });
+
+    render();
+  }
+);
+
 </script>
 
 </body>
