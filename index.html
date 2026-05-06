@@ -16,26 +16,6 @@ button { padding:10px; margin:5px; font-size:10px; }
 <body>
 
 <h3>Scan Paket</h3>
-
-let audioCtx;
-
-// aktifin audio (cukup sekali)
-function enableSound() {
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-}
-
-// bunyi beep
-function beep() {
-  if (!audioCtx) return;
-
-  const osc = audioCtx.createOscillator();
-  osc.type = "sine";
-  osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
-
-  osc.connect(audioCtx.destination);
-  osc.start();
-  osc.stop(audioCtx.currentTime + 0.08);
-}
 <!-- MODE -->
 <div>
   <button onclick="setMode('RETUR')">RETUR</button>
@@ -59,7 +39,26 @@ function beep() {
 <button onclick="clearAll()">❌ Hapus Semua</button>
 
 <script>
+  
+let audioCtx;
 
+// aktifin audio (cukup sekali)
+function enableSound() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+// bunyi beep
+function beep() {
+  if (!audioCtx) return;
+
+  const osc = audioCtx.createOscillator();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
+
+  osc.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.08);
+}
 let mode = "RETUR";
 let data = [];
 
