@@ -25,7 +25,14 @@ button { padding:10px; margin:5px; font-size:10px; }
 <h4>Mode Aktif: <span id="mode">RETUR</span></h4>
 
 <h4>Total: <span id="total">0</span></h4>
-
+<div id="warning" style="
+  color:white;
+  background:red;
+  padding:10px;
+  border-radius:10px;
+  margin:10px;
+  font-weight:bold;
+"></div>
 <div id="reader"></div>
 
 <hr>
@@ -118,7 +125,19 @@ scanner.start(
   (decodedText) => {
 
     // anti double
-    if(data.find(d => d.resi === decodedText)) return;
+    if(data.find(d => d.resi === decodedText)) {
+
+  errorBeep();
+
+  document.getElementById("warning").innerText =
+    "⚠ Resi sudah di scan!";
+
+  setTimeout(() => {
+    document.getElementById("warning").innerText = "";
+  }, 2000);
+
+  return;
+}
 
     data.push({
       resi: decodedText,
@@ -128,7 +147,19 @@ scanner.start(
     render();
   }
 );
+function errorBeep() {
+  if (!audioCtx) return;
 
+  const osc = audioCtx.createOscillator();
+
+  osc.type = "square";
+  osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+
+  osc.connect(audioCtx.destination);
+
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.2);
+}
 </script>
 
 </body>
