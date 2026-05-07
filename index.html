@@ -106,19 +106,24 @@ function sendData() {
   }
 
   fetch("https://script.google.com/macros/s/AKfycbz0EOKUtXc1GXyO5l4nrTQaLLp9L6N7Rb_j3yYnNtw-nYYRmLNzu1nYehfpT-hrjCc/exec", {
-    method: "POST",
-    headers: {
-    "Content-Type": "application/json"
-  },
-    
-    body: JSON.stringify(data)
-  })
-  .then(() => {
-    alert("Data terkirim!");
-    data = [];
-    render();
-  });
-}
+     method: "POST",
+     body: JSON.stringify(data)
+})
+.then(res => res.text())
+.then(res => {
+
+  console.log(res);
+
+  alert("Data terkirim!");
+
+  data = [];
+  render();
+
+})
+.catch(err => {
+  console.log(err);
+  alert("Gagal kirim!");
+});
 
 // scanner
 const scanner = new Html5Qrcode("reader");
