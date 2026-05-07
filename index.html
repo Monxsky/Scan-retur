@@ -107,6 +107,10 @@ function sendData() {
 
   fetch("https://script.google.com/macros/s/AKfycbz0EOKUtXc1GXyO5l4nrTQaLLp9L6N7Rb_j3yYnNtw-nYYRmLNzu1nYehfpT-hrjCc/exec", {
     method: "POST",
+    headers: {
+    "Content-Type": "application/json"
+  },
+    
     body: JSON.stringify(data)
   })
   .then(() => {
