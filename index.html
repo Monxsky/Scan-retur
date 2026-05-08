@@ -3,28 +3,49 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scan Retur</title>
+
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
-body { font-family: Lexend; text-align:center; padding:10px; }
-button { padding:10px; margin:5px; font-size:10px; }
-#reader { width:100%; max-width:400px; margin:auto; }
-.item { margin:5px; padding:5px; border-bottom:1px solid #ccc; }
+body {
+  font-family: Lexend;
+  text-align:center;
+  padding:10px;
+}
+
+button {
+  padding:10px;
+  margin:5px;
+  font-size:10px;
+}
+
+#reader {
+  width:100%;
+  max-width:400px;
+  margin:auto;
+}
+
+.item {
+  margin:5px;
+  padding:5px;
+  border-bottom:1px solid #ccc;
+}
 </style>
 </head>
 
 <body>
 
 <h3>Scan Paket</h3>
-<!-- MODE -->
+
 <div>
   <button onclick="enableSound(); setMode('RETUR')">RETUR</button>
-<button onclick="enableSound(); setMode('CANCEL')">CANCEL</button>
+  <button onclick="enableSound(); setMode('CANCEL')">CANCEL</button>
 </div>
 
 <h4>Mode Aktif: <span id="mode">RETUR</span></h4>
 
 <h4>Total: <span id="total">0</span></h4>
+
 <div id="warning" style="
   color:white;
   background:red;
@@ -33,6 +54,7 @@ button { padding:10px; margin:5px; font-size:10px; }
   margin:10px;
   font-weight:bold;
 "></div>
+
 <div id="reader"></div>
 
 <hr>
@@ -43,120 +65,41 @@ button { padding:10px; margin:5px; font-size:10px; }
 <button onclick="clearAll()">❌ Hapus Semua</button>
 
 <script>
-  
-let audioCtx;
 
-// aktifin audio (cukup sekali)
+// =========================
+// ISI PUNYA LU DISINI
+// =========================
+
+const SUPABASE_URL = "https://vjxytdoybvrdgylxxqaq.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_MBnzcusAZqrkGnAhdDkQYA_ilUyr8mW";
+
+// =========================
+
+let audioCtx;
+let mode = "RETUR";
+let data = [];
+
+// aktifin audio
 function enableSound() {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
-// bunyi beep
+// bunyi sukses
 function beep() {
   if (!audioCtx) return;
 
   const osc = audioCtx.createOscillator();
+
   osc.type = "sine";
   osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
 
   osc.connect(audioCtx.destination);
+
   osc.start();
   osc.stop(audioCtx.currentTime + 0.08);
 }
-let mode = "RETUR";
-let data = [];
 
-function setMode(m) {
-  mode = m;
-  document.getElementById("mode").innerText = m;
-}
-
-function render() {
-  let list = document.getElementById("list");
-  list.innerHTML = "";
-
-  data.forEach((item, i) => {
-    list.innerHTML += `
-      <div class="item">
-        ${item.resi} (${item.status})
-        <button onclick="removeItem(${i})">Hapus</button>
-      </div>
-    `;
-  });
-
-  document.getElementById("total").innerText = data.length;
-}
-
-function removeItem(i) {
-  data.splice(i,1);
-  render();
-}
-
-function clearAll() {
-  if(confirm("Hapus semua data?")) {
-    data = [];
-    render();
-  }
-}
-
-function sendData() {
-  if(data.length === 0) {
-    alert("Tidak ada data!");
-    return;
-  }
-
-  fetch("https://script.google.com/macros/s/AKfycbwOV-29A9FgVrWjkmY6lqISZdC9xcGepkp7iIjDeF7Fq32nzphNBgyA93vI5_oBL7g/exec", {
-     method: "POST",
-     body: JSON.stringify(data)
-})
-.then(res => res.text())
-.then(res => {
-
-  console.log(res);
-
-  alert("Data terkirim!");
-
-  data = [];
-  render();
-
-})
-.catch(err => {
-  console.log(err);
-  alert("Gagal kirim!");
-});
-
-}
-// scanner
-const scanner = new Html5Qrcode("reader");
-
-scanner.start(
-  { facingMode: "environment" },
-  { fps: 10, qrbox: 250 },
-  (decodedText) => {
-
-    // anti double
-    if(data.find(d => d.resi === decodedText)) {
-
-  errorBeep();
-
-  document.getElementById("warning").innerText =
-    "⚠ Resi sudah di scan!";
-
-  setTimeout(() => {
-    document.getElementById("warning").innerText = "";
-  }, 2000);
-
-  return;
-}
-
-    data.push({
-      resi: decodedText,
-      status: mode
-    });
-    beep();
-    render();
-  }
-);
+// bunyi error
 function errorBeep() {
   if (!audioCtx) return;
 
@@ -170,6 +113,136 @@ function errorBeep() {
   osc.start();
   osc.stop(audioCtx.currentTime + 0.2);
 }
+
+// ganti mode
+function setMode(m) {
+  mode = m;
+  document.getElementById("mode").innerText = m;
+}
+
+// render list
+function render() {
+
+  let list = document.getElementById("list");
+
+  list.innerHTML = "";
+
+  data.forEach((item, i) => {
+
+    list.innerHTML += `
+      <div class="item">
+        ${item.resi} (${item.status})
+        <button onclick="removeItem(${i})">Hapus</button>
+      </div>
+    `;
+
+  });
+
+  document.getElementById("total").innerText = data.length;
+}
+
+// hapus item
+function removeItem(i) {
+  data.splice(i,1);
+  render();
+}
+
+// clear semua
+function clearAll() {
+
+  if(confirm("Hapus semua data?")) {
+
+    data = [];
+    render();
+
+  }
+}
+
+// kirim ke Supabase
+async function sendData() {
+
+  if(data.length === 0) {
+
+    alert("Tidak ada data!");
+    return;
+
+  }
+
+  try {
+
+    const payload = data.map(item => ({
+      resi: item.resi,
+      status: item.status,
+      waktu: new Date().toISOString()
+    }));
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/scan`,
+      {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${SUPABASE_KEY}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify(payload)
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Gagal kirim ke database");
+    }
+
+    alert("Data berhasil dikirim!");
+
+    data = [];
+    render();
+
+  } catch(err) {
+
+    console.log(err);
+
+    alert("Gagal kirim data!");
+
+  }
+}
+
+// scanner
+const scanner = new Html5Qrcode("reader");
+
+scanner.start(
+  { facingMode: "environment" },
+  { fps: 10, qrbox: 250 },
+
+  (decodedText) => {
+
+    // anti duplicate
+    if(data.find(d => d.resi === decodedText)) {
+
+      errorBeep();
+
+      document.getElementById("warning").innerText =
+        "⚠ Resi sudah di scan!";
+
+      setTimeout(() => {
+        document.getElementById("warning").innerText = "";
+      }, 2000);
+
+      return;
+    }
+
+    data.push({
+      resi: decodedText,
+      status: mode
+    });
+
+    beep();
+
+    render();
+  }
+);
+
 </script>
 
 </body>
