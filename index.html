@@ -254,7 +254,7 @@ window.onload = async () => {
 
     await scanner.start(
 
-      { facingMode: "user" },
+      { facingMode: { exact: "environment" } },
 
       {
         fps: 10,
