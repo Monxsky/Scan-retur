@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scan Retur</title>
+<title>Scan AWB Retur</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
@@ -35,7 +35,7 @@ button {
 
 <body>
 
-<h3>Scan Paket</h3>
+<h3>Scan AWB Paket</h3>
 
 <div>
   <button onclick="enableSound(); setMode('RETUR')">RETUR</button>
@@ -177,7 +177,7 @@ async function sendData() {
     }));
 
     const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/scan`,
+      `${SUPABASE_URL}/rest/v1/Scan AWB`,
       {
         method: "POST",
         headers: {
@@ -208,10 +208,10 @@ async function sendData() {
   }
 }
 
-// scanner
-const scanner = new Html5Qrcode("reader");
+// Scan AWBner
+const Scan AWBner = new Html5Qrcode("reader");
 
-scanner.start(
+Scan AWBner.start(
   { facingMode: "environment" },
   { fps: 10, qrbox: 250 },
 
@@ -223,7 +223,7 @@ scanner.start(
       errorBeep();
 
       document.getElementById("warning").innerText =
-        "⚠ Resi sudah di scan!";
+        "⚠ Resi sudah di Scan AWB!";
 
       setTimeout(() => {
         document.getElementById("warning").innerText = "";
