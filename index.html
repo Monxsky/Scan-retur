@@ -250,15 +250,11 @@ window.onload = async () => {
 
   try {
 
-    await navigator.mediaDevices.getUserMedia({
-      video: true
-    });
-
     const scanner = new Html5Qrcode("reader");
 
     await scanner.start(
 
-      { facingMode: "environment" },
+      { facingMode: "user" },
 
       {
         fps: 10,
@@ -267,7 +263,6 @@ window.onload = async () => {
 
       (decodedText) => {
 
-        // anti duplicate
         if(data.find(d => d.resi === decodedText)) {
 
           errorBeep();
@@ -276,10 +271,7 @@ window.onload = async () => {
             "⚠ Resi sudah di scan!";
 
           setTimeout(() => {
-
-            document.getElementById("warning").innerText =
-              "";
-
+            document.getElementById("warning").innerText = "";
           }, 2000);
 
           return;
@@ -302,6 +294,7 @@ window.onload = async () => {
 
     alert("Camera gagal dibuka!");
   }
+
 };
 
 </script>
