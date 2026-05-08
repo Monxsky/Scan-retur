@@ -9,26 +9,35 @@
 <style>
 body {
   font-family: Lexend;
-  text-align:center;
-  padding:10px;
+  text-align: center;
+  padding: 10px;
 }
 
 button {
-  padding:10px;
-  margin:5px;
-  font-size:10px;
+  padding: 10px;
+  margin: 5px;
+  font-size: 10px;
 }
 
 #reader {
-  width:100%;
-  max-width:400px;
-  margin:auto;
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
 }
 
 .item {
-  margin:5px;
-  padding:5px;
-  border-bottom:1px solid #ccc;
+  margin: 5px;
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+#warning {
+  color: white;
+  background: red;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 10px;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -46,14 +55,7 @@ button {
 
 <h4>Total: <span id="total">0</span></h4>
 
-<div id="warning" style="
-  color:white;
-  background:red;
-  padding:10px;
-  border-radius:10px;
-  margin:10px;
-  font-weight:bold;
-"></div>
+<div id="warning"></div>
 
 <div id="reader"></div>
 
@@ -67,11 +69,16 @@ button {
 <script>
 
 // =========================
-// ISI PUNYA LU DISINI
+// SUPABASE
 // =========================
 
-const SUPABASE_URL = "https://vjxytdoybvrdgylxxqaq.supabase.co/rest/v1/";
-const SUPABASE_KEY = "sb_publishable_MBnzcusAZqrkGnAhdDkQYA_ilUyr8mW";
+const SUPABASE_URL = "https://vjxytdoybvrdgylxxqaq.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_MBnzcusAZqrkGnAhdDkQYA_ilUyr8mW";
+
+// NAMA TABLE SUPABASE
+const TABLE_NAME = "scan_awb";
 
 // =========================
 
@@ -86,44 +93,58 @@ function enableSound() {
 
 // bunyi sukses
 function beep() {
+
   if (!audioCtx) return;
 
   const osc = audioCtx.createOscillator();
 
   osc.type = "sine";
-  osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
+
+  osc.frequency.setValueAtTime(
+    1000,
+    audioCtx.currentTime
+  );
 
   osc.connect(audioCtx.destination);
 
   osc.start();
+
   osc.stop(audioCtx.currentTime + 0.08);
 }
 
 // bunyi error
 function errorBeep() {
+
   if (!audioCtx) return;
 
   const osc = audioCtx.createOscillator();
 
   osc.type = "square";
-  osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+
+  osc.frequency.setValueAtTime(
+    300,
+    audioCtx.currentTime
+  );
 
   osc.connect(audioCtx.destination);
 
   osc.start();
+
   osc.stop(audioCtx.currentTime + 0.2);
 }
 
 // ganti mode
 function setMode(m) {
+
   mode = m;
+
   document.getElementById("mode").innerText = m;
 }
 
 // render list
 function render() {
 
-  let list = document.getElementById("list");
+  const list = document.getElementById("list");
 
   list.innerHTML = "";
 
@@ -132,18 +153,23 @@ function render() {
     list.innerHTML += `
       <div class="item">
         ${item.resi} (${item.status})
-        <button onclick="removeItem(${i})">Hapus</button>
+        <button onclick="removeItem(${i})">
+          Hapus
+        </button>
       </div>
     `;
 
   });
 
-  document.getElementById("total").innerText = data.length;
+  document.getElementById("total").innerText =
+    data.length;
 }
 
 // hapus item
 function removeItem(i) {
-  data.splice(i,1);
+
+  data.splice(i, 1);
+
   render();
 }
 
@@ -153,19 +179,20 @@ function clearAll() {
   if(confirm("Hapus semua data?")) {
 
     data = [];
+
     render();
 
   }
 }
 
-// kirim ke Supabase
+// kirim data ke Supabase
 async function sendData() {
 
   if(data.length === 0) {
 
     alert("Tidak ada data!");
-    return;
 
+    return;
   }
 
   try {
@@ -177,26 +204,34 @@ async function sendData() {
     }));
 
     const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/Scan AWB`,
+      `${SUPABASE_URL}/rest/v1/${TABLE_NAME}`,
       {
         method: "POST",
+
         headers: {
           "apikey": SUPABASE_KEY,
           "Authorization": `Bearer ${SUPABASE_KEY}`,
           "Content-Type": "application/json",
           "Prefer": "return=minimal"
         },
+
         body: JSON.stringify(payload)
       }
     );
 
     if (!response.ok) {
-      throw new Error("Gagal kirim ke database");
+
+      const errText = await response.text();
+
+      console.log(errText);
+
+      throw new Error("Gagal kirim");
     }
 
     alert("Data berhasil dikirim!");
 
     data = [];
+
     render();
 
   } catch(err) {
@@ -204,44 +239,70 @@ async function sendData() {
     console.log(err);
 
     alert("Gagal kirim data!");
-
   }
 }
 
-// Scan AWBner
-const Scan AWBner = new Html5Qrcode("reader");
+// =========================
+// START CAMERA
+// =========================
 
-Scan AWBner.start(
-  { facingMode: "environment" },
-  { fps: 10, qrbox: 250 },
+window.onload = async () => {
 
-  (decodedText) => {
+  try {
 
-    // anti duplicate
-    if(data.find(d => d.resi === decodedText)) {
-
-      errorBeep();
-
-      document.getElementById("warning").innerText =
-        "⚠ Resi sudah di Scan AWB!";
-
-      setTimeout(() => {
-        document.getElementById("warning").innerText = "";
-      }, 2000);
-
-      return;
-    }
-
-    data.push({
-      resi: decodedText,
-      status: mode
+    await navigator.mediaDevices.getUserMedia({
+      video: true
     });
 
-    beep();
+    const scanner = new Html5Qrcode("reader");
 
-    render();
+    await scanner.start(
+
+      { facingMode: "environment" },
+
+      {
+        fps: 10,
+        qrbox: 250
+      },
+
+      (decodedText) => {
+
+        // anti duplicate
+        if(data.find(d => d.resi === decodedText)) {
+
+          errorBeep();
+
+          document.getElementById("warning").innerText =
+            "⚠ Resi sudah di scan!";
+
+          setTimeout(() => {
+
+            document.getElementById("warning").innerText =
+              "";
+
+          }, 2000);
+
+          return;
+        }
+
+        data.push({
+          resi: decodedText,
+          status: mode
+        });
+
+        beep();
+
+        render();
+      }
+    );
+
+  } catch(err) {
+
+    console.log(err);
+
+    alert("Camera gagal dibuka!");
   }
-);
+};
 
 </script>
 
