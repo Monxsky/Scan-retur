@@ -98,15 +98,14 @@ async function loadData() {
   const manifestRes = await fetch(
     `${SUPABASE_URL}/rest/v1/retur_manifest?select=*`,
     {
-      headers:{
+      headers: {
         apikey: SUPABASE_KEY,
         Authorization: `Bearer ${SUPABASE_KEY}`
       }
     }
   );
 
-  const manifest =
-    await manifestRes.json();
+  const manifest = await manifestRes.json();
 
   // =========================
   // AMBIL DATA SCAN
@@ -115,56 +114,47 @@ async function loadData() {
   const scanRes = await fetch(
     `${SUPABASE_URL}/rest/v1/scan_awb?select=*`,
     {
-      headers:{
+      headers: {
         apikey: SUPABASE_KEY,
         Authorization: `Bearer ${SUPABASE_KEY}`
       }
     }
   );
 
-  const scans =
-    await scanRes.json();
+  const scans = await scanRes.json();
 
   // =========================
   // HITUNG DASHBOARD
   // =========================
 
-  const totalPerjalanan =
-    manifest.length;
+  const totalPerjalanan = manifest.length;
 
-  const scannedResi =
-    scans.map(s => s.resi);
+  const scannedResi = scans.map(s => s.resi);
 
-  const sudahTiba =
-    manifest.filter(m =>
-      scannedResi.includes(m.resi)
-    ).length;
+  const sudahTiba = manifest.filter(m =>
+    scannedResi.includes(m.resi)
+  ).length;
 
-  const belumTiba =
-    totalPerjalanan - sudahTiba;
+  const belumTiba = totalPerjalanan - sudahTiba;
 
   // =========================
   // TAMPILKAN CARD
   // =========================
 
-  document.getElementById(
-    "totalPerjalanan"
-  ).innerText = totalPerjalanan;
+  document.getElementById("totalPerjalanan").innerText =
+    totalPerjalanan;
 
-  document.getElementById(
-    "totalTiba"
-  ).innerText = sudahTiba;
+  document.getElementById("totalTiba").innerText =
+    sudahTiba;
 
-  document.getElementById(
-    "belumTiba"
-  ).innerText = belumTiba;
+  document.getElementById("belumTiba").innerText =
+    belumTiba;
 
   // =========================
   // TABEL SCAN
   // =========================
 
-  const tbody =
-    document.getElementById("tableBody");
+  const tbody = document.getElementById("tableBody");
 
   tbody.innerHTML = "";
 
@@ -196,3 +186,7 @@ async function loadData() {
 loadData();
 
 setInterval(loadData, 3000);
+
+</script> 
+</body> 
+</html>
