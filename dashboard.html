@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Scan</title>
+
+<style>
+body{
+  font-family:Arial;
+  padding:20px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  border:1px solid #ccc;
+  padding:8px;
+  text-align:left;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Dashboard Scan AWB</h2>
+
+<table>
+
+<thead>
+<tr>
+  <th>Resi</th>
+  <th>Status</th>
+  <th>Waktu</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+<script>
+
+const SUPABASE_URL =
+"https://vjxytdoybvrdgylxxqaq.supabase.co";
+
+const SUPABASE_KEY =
+"ISI_KEY_LU";
+
+async function loadData() {
+
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/scan_awb?select=*`,
+    {
+      headers:{
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`
+      }
+    }
+  );
+
+  const data = await res.json();
+
+  const tbody =
+    document.getElementById("tableBody");
+
+  tbody.innerHTML = "";
+
+  data.reverse().forEach(item => {
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${item.resi}</td>
+        <td>${item.status}</td>
+        <td>${item.waktu}</td>
+      </tr>
+    `;
+
+  });
+}
+
+loadData();
+
+setInterval(loadData, 3000);
+
+</script>
+
+</body>
+</html>
