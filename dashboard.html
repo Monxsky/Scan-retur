@@ -66,7 +66,12 @@ justify-content:center;
   </div>
 
 </div>
+<input type="file" id="csvFile" accept=".csv">
 
+<button onclick="uploadCSV()">
+Upload CSV
+</button>
+  
 <table>
 
 <thead>
@@ -184,6 +189,90 @@ async function loadData() {
 }
 
 loadData();
+
+async function uploadCSV() {
+
+  const fileInput =
+    document.getElementById("csvFile");
+
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Pilih file CSV dulu!");
+    return;
+  }
+
+  const text = await file.text();
+
+  const rows = text.split("\n");
+
+  // buang header
+  rows.shift();
+
+  const payload = [];
+
+  rows.forEach(row => {
+
+    const cols = row.split(",");
+
+    if(cols[0]) {
+
+      payload.push({
+        resi: cols[0].trim(),
+        status: cols[1]
+          ? cols[1].trim()
+          : "perjalanan"
+      });
+
+    }
+
+  });
+
+  try {
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/retur_manifest`,
+      {
+        method: "POST",
+
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization":
+            `Bearer ${SUPABASE_KEY}`,
+          "Content-Type":
+            "application/json",
+          "Prefer":
+            "return=minimal"
+        },
+
+        body: JSON.stringify(payload)
+      }
+    );
+
+    if(!response.ok) {
+
+      const err =
+        await response.text();
+
+      console.log(err);
+
+      throw new Error();
+
+    }
+
+    alert("CSV berhasil diupload!");
+
+    loadData();
+
+  } catch(err) {
+
+    console.log(err);
+
+    alert("Upload gagal!");
+
+  }
+
+}
 
 setInterval(loadData, 3000);
 
