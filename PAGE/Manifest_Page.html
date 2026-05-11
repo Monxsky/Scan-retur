@@ -1,32 +1,80 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <link rel="stylesheet"
-href="/style.css">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>PAKET MANIFEST</title>
 
-<input type="file" id="csvFile" accept=".csv">
+<link rel="stylesheet"
+href="css/style.css">
 
-<button onclick="uploadCSV()">
-Upload CSV
-</button>
-  
-<table>
-
-<thead>
-<tr>
-  <th>Resi</th>
-  <th>Status</th>
-  <th>Waktu</th>
-</tr>
-</thead>
-
-<tbody id="tableBody"></tbody>
-
-</table>
-
-<script src="JS/config.js"></script>
-<script src="JS/manifest.js"></script>
 </head>
+
+<body>
+
+<div class="container">
+
+  <div class="sidebar">
+
+    <h2>MENU</h2>
+
+    <a href="/scan.html">
+      Scan
+    </a>
+
+    <a href="/dashboard.html">
+      Dashboard
+    </a>
+
+    <a href="/manifest.html">
+      Manifest
+    </a>
+
+    <a href="/inbound.html">
+      Inbound
+    </a>
+
+  </div>
+
+  <div class="content">
+
+    <h2>PAKET MANIFEST</h2>
+
+    <input
+      type="file"
+      id="csvFile"
+      accept=".csv">
+
+    <button onclick="uploadCSV()">
+      Upload CSV
+    </button>
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Resi</th>
+          <th>Status</th>
+        </tr>
+
+      </thead>
+
+      <tbody id="manifestBody">
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/manifest.js"></script>
+
+</body>
 </html>

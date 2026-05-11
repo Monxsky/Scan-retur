@@ -1,27 +1,74 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Inbound</title>
 
 <link rel="stylesheet"
-href="style.css">
-<h2>Inbound</h2>
+href="css/style.css">
 
-<table>
+</head>
 
-<thead>
-<tr>
-  <th>Resi</th>
-  <th>Status</th>
-  <th>Waktu</th>
-</tr>
-</thead>
+<body>
 
-<tbody id="tableBody"></tbody>
+<div class="container">
 
-</table>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
 
-<script src="JS/config.js"></script>
-<script src="JS/inbound.js"></script>
+    <h2>MENU</h2>
 
-  </head>
+    <a href="/scan.html">
+      Scan
+    </a>
+
+    <a href="/index.html">
+      Dashboard
+    </a>
+
+    <a href="/manifest.html">
+      Manifest
+    </a>
+
+    <a href="/inbound.html">
+      Inbound
+    </a>
+
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <h2>Inbound</h2>
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Resi</th>
+          <th>Status</th>
+          <th>Waktu</th>
+        </tr>
+
+      </thead>
+
+      <tbody id="tableBody">
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/inbound.js"></script>
+
+</body>
 </html>

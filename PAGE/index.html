@@ -1,46 +1,90 @@
 <!DOCTYPE html>
 <html>
-  <head>
-<link rel="stylesheet" href="style.css">
-<h2>Dashboard</h2>
 
-<div class="cards">
+<head>
 
-  <div class="card">
-    <h3>Total Perjalanan</h3>
-    <h1 id="totalPerjalanan">0</h1>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard</title>
+
+<link rel="stylesheet"
+href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <h2>MENU</h2>
+
+    <a href="/scan.html">
+      Scan
+    </a>
+
+    <a href="/index.html">
+      Dashboard
+    </a>
+
+    <a href="/manifest.html">
+      Manifest
+    </a>
+
+    <a href="/inbound.html">
+      Inbound
+    </a>
+
   </div>
 
-  <div class="card">
-    <h3>Sudah Tiba</h3>
-    <h1 id="totalTiba">0</h1>
-  </div>
+  <!-- CONTENT -->
+  <div class="content">
 
-  <div class="card">
-    <h3>Belum Tiba</h3>
-    <h1 id="belumTiba">0</h1>
+    <h2>Dashboard</h2>
+
+    <div class="cards">
+
+      <div class="card">
+
+        <h3>Total Perjalanan</h3>
+
+        <h1 id="totalPerjalanan">
+          0
+        </h1>
+
+      </div>
+
+      <div class="card">
+
+        <h3>Sudah Tiba</h3>
+
+        <h1 id="totalTiba">
+          0
+        </h1>
+
+      </div>
+
+      <div class="card">
+
+        <h3>Belum Tiba</h3>
+
+        <h1 id="belumTiba">
+          0
+        </h1>
+
+      </div>
+
+    </div>
+
   </div>
 
 </div>
 
+<script src="js/config.js"></script>
+<script src="js/index.js"></script>
 
-<Div class ="container">
-    <div class ="sidebar">
-        <h2>MENU DASHBOARD</h2>
-
-        <a href="/PAGE/scan.html">mulai scan</a>
-
-        <a href="/PAGE/Scan_Inbound.html">Inbound</a>
-
-        <a href="/PAGE/Manifest_Page.html">Manifest</a>
-    </div>
-
-</Div>
-
-<script src="JS/config.js"></script>
-<script src="JS/index.js"></script>
-
-  </head>
-
+</body>
 </html>
-
