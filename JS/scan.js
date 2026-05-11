@@ -214,9 +214,8 @@ window.onload = async () => {
     await scanner.start(
 
       {
-        facingMode: {
-          exact: "environment"
-        }
+        facingMode: "environment"
+      
       },
 
       {
